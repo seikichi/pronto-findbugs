@@ -1,4 +1,4 @@
-require "pronto/findbugs/version"
+require 'pronto/findbugs/version'
 
 module Pronto
   module Findbugs

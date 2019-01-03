@@ -1,4 +1,4 @@
-$LOAD_PATH.unshift File.expand_path("../../lib", __FILE__)
-require "pronto/findbugs"
+$LOAD_PATH.unshift File.expand_path('../lib', __dir__)
+require 'pronto/findbugs'
 
-require "minitest/autorun"
+require 'minitest/autorun'
