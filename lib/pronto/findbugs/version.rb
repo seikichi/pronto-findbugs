@@ -1,5 +1,5 @@
 module Pronto
-  module Findbugs
+  module FindbugsVersion
     VERSION = '0.1.0'.freeze
   end
 end
