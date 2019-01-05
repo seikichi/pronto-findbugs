@@ -26,7 +26,9 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency 'pronto', '~> 0.9.5'
   spec.add_development_dependency 'bundler', '~> 1.16'
+  spec.add_development_dependency 'coveralls'
   spec.add_development_dependency 'rake', '~> 10.0'
   spec.add_development_dependency 'rubocop', '~> 0.62'
+  spec.add_development_dependency 'simplecov'
   spec.add_development_dependency 'test-unit', '~> 3.2.8'
 end
