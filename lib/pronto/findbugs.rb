@@ -45,7 +45,7 @@ module Pronto
     def read_findbugs_report(path)
       doc = REXML::Document.new(File.read(path))
       src_dirs = REXML::XPath.match(doc, '/BugCollection/Project/SrcDir/text()')
-      return [] unless src_dirs.size == 1
+      return [] if src_dirs.empty?
 
       src = src_dirs.first.to_s
       REXML::XPath.match(doc, '/BugCollection/BugInstance').map do |bug|
