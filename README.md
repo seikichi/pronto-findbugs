@@ -14,6 +14,8 @@ You need to specify location of findbugs reports by passing `PRONTO_FINDBUGS_REP
 PRONTO_FINDBUGS_REPORTS_DIR=build/reports/spotbugs/ pronto run --index
 ```
 
+See [seikichi/pronto-checkstyle-findbugs-example](https://github.com/seikichi/pronto-checkstyle-findbugs-example) for more details.
+
 ## Installation
 
 Add this line to your application's Gemfile:
