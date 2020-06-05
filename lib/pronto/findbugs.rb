@@ -47,10 +47,12 @@ module Pronto
       src_dirs = REXML::XPath.match(doc, '/BugCollection/Project/SrcDir/text()')
       return [] if src_dirs.empty?
 
-      src = src_dirs.first.to_s
       REXML::XPath.match(doc, '/BugCollection/BugInstance').map do |bug|
-        Offence.new(path_from(bug, src), line_from(bug), message_from(bug))
-      end
+        src = src_dirs.find { |s| File.exist?(path_from(bug, s.to_s)) }
+        next unless src
+
+        Offence.new(path_from(bug, src.to_s), line_from(bug), message_from(bug))
+      end.compact
     end
 
     def path_from(bug_node, root)

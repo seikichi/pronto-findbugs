@@ -1,5 +1,6 @@
 require 'test_helper'
 
+require 'fileutils'
 require 'pathname'
 require 'tmpdir'
 
@@ -17,28 +18,31 @@ class FindbugsTest < Test::Unit::TestCase
   end
 
   test '#run returns messages when violations are found' do
-    xml = <<-REPORT_XML
-    <?xml version="1.0" encoding="UTF-8"?>
-    <BugCollection>
-      <Project>
-        <SrcDir>/path/to/src/main/java</SrcDir>
-      </Project>
-      <BugInstance type="ES_COMPARING_STRINGS_WITH_EQ" abbrev="ES" category="BAD_PRACTICE">
-        <LongMessage>FOO</LongMessage>
-        <SourceLine start="1" end="1" sourcepath="foo/bar/App.java"></SourceLine>
-      </BugInstance>
-      <BugInstance type="ES_COMPARING_STRINGS_WITH_EQ" abbrev="ES" category="BAD_PRACTICE">
-        <LongMessage>BAR</LongMessage>
-        <SourceLine start="42" end="42" sourcepath="foo/bar/App.java"></SourceLine>
-      </BugInstance>
-    </BugCollection>
-    REPORT_XML
-
     Dir.mktmpdir do |dir|
+      xml = <<-REPORT_XML
+      <?xml version="1.0" encoding="UTF-8"?>
+      <BugCollection>
+        <Project>
+          <SrcDir>#{dir}/src/main/java</SrcDir>
+        </Project>
+        <BugInstance type="ES_COMPARING_STRINGS_WITH_EQ" abbrev="ES" category="BAD_PRACTICE">
+          <LongMessage>FOO</LongMessage>
+          <SourceLine start="1" end="1" sourcepath="foo/bar/App.java"></SourceLine>
+        </BugInstance>
+        <BugInstance type="ES_COMPARING_STRINGS_WITH_EQ" abbrev="ES" category="BAD_PRACTICE">
+          <LongMessage>BAR</LongMessage>
+          <SourceLine start="42" end="42" sourcepath="foo/bar/App.java"></SourceLine>
+        </BugInstance>
+      </BugCollection>
+      REPORT_XML
+
       ENV.store('PRONTO_FINDBUGS_REPORTS_DIR', dir)
       File.write(File.join(dir, 'main.xml'), xml)
 
-      findbugs = Pronto::Findbugs.new(create_new_file_patches('/path/to', 'src/main/java/foo/bar/App.java'))
+      FileUtils.mkdir_p(File.join(dir, 'src/main/java/foo/bar/'))
+      File.write(File.join(dir, 'src/main/java/foo/bar/App.java'), '// dummy')
+
+      findbugs = Pronto::Findbugs.new(create_new_file_patches(dir, 'src/main/java/foo/bar/App.java'))
       messages = findbugs.run
 
       assert_equal(1, messages.size)
@@ -48,23 +52,26 @@ class FindbugsTest < Test::Unit::TestCase
   end
 
   test '#run works against findbugs reports without messages' do
-    xml = <<-REPORT_XML
-    <?xml version="1.0" encoding="UTF-8"?>
-    <BugCollection>
-      <Project>
-        <SrcDir>/path/to/src/main/java</SrcDir>
-      </Project>
-      <BugInstance type="ES_COMPARING_STRINGS_WITH_EQ" abbrev="ES" category="BAD_PRACTICE">
-        <SourceLine start="1" end="1" sourcepath="foo/bar/App.java"></SourceLine>
-      </BugInstance>
-    </BugCollection>
-    REPORT_XML
-
     Dir.mktmpdir do |dir|
+      xml = <<-REPORT_XML
+        <?xml version="1.0" encoding="UTF-8"?>
+        <BugCollection>
+          <Project>
+            <SrcDir>#{dir}/src/main/java</SrcDir>
+          </Project>
+          <BugInstance type="ES_COMPARING_STRINGS_WITH_EQ" abbrev="ES" category="BAD_PRACTICE">
+            <SourceLine start="1" end="1" sourcepath="foo/bar/App.java"></SourceLine>
+          </BugInstance>
+        </BugCollection>
+      REPORT_XML
+
       ENV.store('PRONTO_FINDBUGS_REPORTS_DIR', dir)
       File.write(File.join(dir, 'main.xml'), xml)
 
-      findbugs = Pronto::Findbugs.new(create_new_file_patches('/path/to', 'src/main/java/foo/bar/App.java'))
+      FileUtils.mkdir_p(File.join(dir, 'src/main/java/foo/bar/'))
+      File.write(File.join(dir, 'src/main/java/foo/bar/App.java'), '// dummy')
+
+      findbugs = Pronto::Findbugs.new(create_new_file_patches(dir, 'src/main/java/foo/bar/App.java'))
       messages = findbugs.run
 
       assert_equal(1, messages.size)
