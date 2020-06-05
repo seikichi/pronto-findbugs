@@ -17,7 +17,7 @@ module Pronto
     Offence = Struct.new(:path, :line, :message)
 
     def findbugs_reports_dir
-      ENV['PRONTO_FINDBUGS_REPORTS_DIR'] || (raise 'Please set `PRONT_FINDBUGS_REPORTS_DIR` to use pronto-findbugs')
+      ENV['PRONTO_FINDBUGS_REPORTS_DIR'] || (raise 'Please set `PRONTO_FINDBUGS_REPORTS_DIR` to use pronto-findbugs')
     end
 
     def valid_patch?(patch)
